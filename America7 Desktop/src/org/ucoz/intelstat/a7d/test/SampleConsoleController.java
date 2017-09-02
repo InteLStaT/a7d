@@ -185,7 +185,7 @@ public class SampleConsoleController implements Controller, GameListener {
 	}
 
 	@Override
-	public void deckSizeDecreased(GameQuantitativeEvent e) {
+	public void stockSizeDecreased(GameQuantitativeEvent e) {
 
 
 	}
