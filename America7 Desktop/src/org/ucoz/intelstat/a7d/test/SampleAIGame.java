@@ -36,6 +36,8 @@ public class SampleAIGame extends GameWindow {
 		game.addGameListener((GameListener) humanCtrl);
 		human = game.new Player("You", humanCtrl);
 		ai = game.new Player("AI", aiCtrl);
+		human.readyUp();
+		ai.readyUp();
 	}
 
 	public static void main(String[] args) {

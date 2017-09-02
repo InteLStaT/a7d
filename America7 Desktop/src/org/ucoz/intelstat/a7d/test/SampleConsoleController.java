@@ -15,6 +15,7 @@ import org.ucoz.intelstat.a7.core.GamePassiveEvent;
 import org.ucoz.intelstat.a7.core.GameQuantitativeEvent;
 import org.ucoz.intelstat.a7.core.GameState;
 import org.ucoz.intelstat.gc.GCard;
+import org.ucoz.intelstat.gc.GCard.Suit;
 
 public class SampleConsoleController implements Controller, GameListener {
 
@@ -23,12 +24,12 @@ public class SampleConsoleController implements Controller, GameListener {
 	public static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 	@Override
-	public GCard proposeCard(GCard topCard, List<GCard> handView, Game game, Player player) {
+	public GCard proposeCard(List<GCard> handView, Game game, Player player) {
 
 		GCard card = null;
 
 		System.out.println(
-				"Top card: " + "\033[44m" + color(topCard.toString()) + ". Cards in deck: " + game.getDrawDeckSize());
+				"Top card: " + "\033[44m" + color(game.getTopCard().toString()) + ". Cards in deck: " + game.getDrawDeckSize());
 		System.out.println("Opponent cards: " + oppCardCount);
 		System.out.print("Your cards are: | ");
 		for (int i = 0; i < handView.size(); i++) {
@@ -40,11 +41,11 @@ public class SampleConsoleController implements Controller, GameListener {
 		try {
 			idx = Integer.parseInt(reader.readLine());
 		} catch (IOException e) {
-			System.err.println("Some kind of error happened that I can't handle :(");
+			System.out.println("Some kind of error happened that I can't handle :("); // yep that's absolutely true, lazyness is a good reason
 			System.exit(1);
 		} catch (NumberFormatException e) {
-			System.err.println("enter a noomba u stoopid");
-			System.err.println("now i haz 2 quit cuz error.");
+			System.out.println("enter a noomba u stoopid");
+			System.out.println("now i haz 2 quit cuz error.");
 			System.exit(1);
 		}
 		if (idx == 0) {
@@ -62,6 +63,73 @@ public class SampleConsoleController implements Controller, GameListener {
 		return card;
 	}
 
+	@Override
+	public GCard proposeCardWithSuit(List<GCard> handView, Game game, Player player, Suit suit) {
+		
+		GCard card = null;
+		
+		System.out.println(
+				"Top card: " + "\033[44m" + color(game.getTopCard().toString()) + ". Cards in deck: " + game.getDrawDeckSize());
+		System.out.println("Opponent cards: " + oppCardCount);
+		System.out.print("Your cards are: | ");
+		for (int i = 0; i < handView.size(); i++) {
+			System.out.print(i + 1 + ": " + color(handView.get(i).toString()) + " | ");
+		}
+		System.out.println();
+		System.out.println("You have to play a card with suit " + colormap.get(suit.toString()) + suit.toString() + "\033[0m.");
+		System.out.print("Enter the card's number you want to put in the pile, or 0 to draw: > ");
+		
+		int idx = 0;
+		try {
+			idx = Integer.parseInt(reader.readLine());
+		} catch (IOException e) {
+			System.out.println("Some kind of error happened that I can't handle :("); // yep that's absolutely true, lazyness is a good reason
+			System.exit(1);
+		} catch (NumberFormatException e) {
+			System.out.println("enter a noomba u stoopid");
+			System.out.println("now i haz 2 quit cuz error.");
+			System.exit(1);
+		}
+		if (idx == 0) {
+			card = null;
+			System.out.println();
+			System.out.println("-- You: I drew a card.");
+			System.out.println();
+		} else {
+			card = handView.get(idx - 1);
+			System.out.println();
+			System.out.println("-- You: I put the card " + idx + " " + color(handView.get(idx - 1).toString())
+					+ " into the pile.");
+			System.out.println();
+		}
+		return card;
+	}
+	
+	@Override
+	public GCard.Suit askForSuit(List<GCard> handView, Game game, Player player) {
+		System.out.println("You have to ask for a suit.");
+		System.out.print("The suits are: | ");
+		
+		for(GCard.Suit suit : GCard.Suit.values()) {
+			System.out.println(suit.ordinal() + 1 + ": " + colormap.get(suit.toString()) + suit.toString() + " | ");
+		}
+		
+		System.out.print("\033[0mEnter the suit's number you want to ask for: ");
+		
+		int idx = 0;
+		try {
+			idx = Integer.parseInt(reader.readLine());
+		} catch (IOException e) {
+			System.out.println("Some kind of error happened that I can't handle :(");
+			System.exit(1);
+		} catch (NumberFormatException e) {
+			System.out.println("enter a noomba u stoopid");
+			System.out.println("now i haz 2 quit cuz error.");
+			System.exit(1);
+		}
+		return GCard.Suit.values()[idx - 1];
+	}
+	
 	@Override
 	public void playerJoined(GamePassiveEvent e) {
 
@@ -155,4 +223,5 @@ public class SampleConsoleController implements Controller, GameListener {
 	static String surround(String str, String prefix, String suffix) {
 		return prefix + str + suffix;
 	}
+
 }
