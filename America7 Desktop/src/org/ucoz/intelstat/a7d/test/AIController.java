@@ -67,7 +67,7 @@ public class AIController implements Controller {
 			System.out.println("\r-- AI Bot: I drew a card.");
 			System.out.println();
 		} else {
-			System.out.println("\r-- AI Bot: I put the card " + SampleConsoleController.color(card.toString()) + " into the pile.");
+			System.out.println("\r-- AI Bot: I put the card " + SampleConsoleController.color(card) + " into the pile.");
 			System.out.println();
 		}
 	}

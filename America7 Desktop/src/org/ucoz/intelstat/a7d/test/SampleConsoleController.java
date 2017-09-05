@@ -15,8 +15,10 @@ import org.ucoz.intelstat.a7.core.GamePassiveEvent;
 import org.ucoz.intelstat.a7.core.GameQuantitativeEvent;
 import org.ucoz.intelstat.a7.core.GameState;
 import org.ucoz.intelstat.gc.GCard;
+import org.ucoz.intelstat.gc.GCard.Rank;
 import org.ucoz.intelstat.gc.GCard.Suit;
 
+// And oh boi, this is just a console app.
 public class SampleConsoleController implements Controller, GameListener {
 
 	private Player me;
@@ -28,134 +30,156 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		GCard card = null;
 
-		System.out.println(
-				"Top card: " + "\033[44m" + color(game.getTopCard().toString()) + ". Cards in deck: " + game.getDrawDeckSize());
-		System.out.println("Opponent cards: " + oppCardCount);
-		System.out.print("Your cards are: | ");
-		for (int i = 0; i < handView.size(); i++) {
-			System.out.print(i + 1 + ": " + color(handView.get(i).toString()) + " | ");
-		}
+		printProposeInformation(handView, game);
 		System.out.println();
-		System.out.print("Enter the card's number you want to put in the pile, or 0 to draw: > ");
-		int idx = 0;
-		try {
-			idx = Integer.parseInt(reader.readLine());
-		} catch (IOException e) {
-			System.out.println("Some kind of error happened that I can't handle :("); // yep that's absolutely true, lazyness is a good reason
-			System.exit(1);
-		} catch (NumberFormatException e) {
-			System.out.println("enter a noomba u stoopid");
-			System.out.println("now i haz 2 quit cuz error.");
-			System.exit(1);
-		}
+
+		int idx = readIndexFromUser(0, handView.size(),
+				"Enter the card's number you want to put in the pile, or 0 to draw: > ");
+
 		if (idx == 0) {
 			card = null;
-			System.out.println();
-			System.out.println("-- You: I drew a card.");
-			System.out.println();
+			chat(true, card, idx);
 		} else {
 			card = handView.get(idx - 1);
-			System.out.println();
-			System.out.println("-- You: I put the card " + idx + " " + color(handView.get(idx - 1).toString())
-					+ " into the pile.");
-			System.out.println();
+			chat(false, card, idx);
 		}
 		return card;
 	}
 
 	@Override
 	public GCard proposeCardWithSuit(List<GCard> handView, Game game, Player player, Suit suit) {
-		
+
 		GCard card = null;
-		
-		System.out.println(
-				"Top card: " + "\033[44m" + color(game.getTopCard().toString()) + ". Cards in deck: " + game.getDrawDeckSize());
-		System.out.println("Opponent cards: " + oppCardCount);
-		System.out.print("Your cards are: | ");
-		for (int i = 0; i < handView.size(); i++) {
-			System.out.print(i + 1 + ": " + color(handView.get(i).toString()) + " | ");
-		}
+
+		printProposeInformation(handView, game);
 		System.out.println();
-		System.out.println("You have to play a card with suit " + colormap.get(suit.toString()) + suit.toString() + "\033[0m.");
-		System.out.print("Enter the card's number you want to put in the pile, or 0 to draw: > ");
-		
-		int idx = 0;
-		try {
-			idx = Integer.parseInt(reader.readLine());
-		} catch (IOException e) {
-			System.out.println("Some kind of error happened that I can't handle :("); // yep that's absolutely true, lazyness is a good reason
-			System.exit(1);
-		} catch (NumberFormatException e) {
-			System.out.println("enter a noomba u stoopid");
-			System.out.println("now i haz 2 quit cuz error.");
-			System.exit(1);
-		}
+		System.out.println("You have to play a card with suit " + colormap.get(suit.toString()) + suit.toString()
+				+ (AnsiColor.RESET + "."));
+
+		int idx = readIndexFromUser(0, handView.size(),
+				"Enter the card's number you want to put in the pile, or 0 to draw: > ");
+
 		if (idx == 0) {
 			card = null;
-			System.out.println();
-			System.out.println("-- You: I drew a card.");
-			System.out.println();
+			chat(true, card, idx);
 		} else {
 			card = handView.get(idx - 1);
-			System.out.println();
-			System.out.println("-- You: I put the card " + idx + " " + color(handView.get(idx - 1).toString())
-					+ " into the pile.");
-			System.out.println();
+			chat(false, card, idx);
 		}
+
 		return card;
 	}
-	
+
 	@Override
 	public GCard.Suit askForSuit(List<GCard> handView, Game game, Player player) {
 		System.out.println("You have to ask for a suit.");
 		System.out.print("The suits are: | ");
-		
-		for(GCard.Suit suit : GCard.Suit.values()) {
-			System.out.println(suit.ordinal() + 1 + ": " + colormap.get(suit.toString()) + suit.toString() + " | ");
+
+		for (GCard.Suit suit : GCard.Suit.values()) {
+			System.out.print(suit.ordinal() + 1 + ": " + colormap.get(suit) + suit.toString() + " | ");
 		}
-		
-		System.out.print("\033[0mEnter the suit's number you want to ask for: ");
-		
-		int idx = 0;
-		try {
-			idx = Integer.parseInt(reader.readLine());
-		} catch (IOException e) {
-			System.out.println("Some kind of error happened that I can't handle :(");
-			System.exit(1);
-		} catch (NumberFormatException e) {
-			System.out.println("enter a noomba u stoopid");
-			System.out.println("now i haz 2 quit cuz error.");
-			System.exit(1);
-		}
-		return GCard.Suit.values()[idx - 1];
+
+		System.out.print("\033[0m");
+
+		return GCard.Suit.values()[readIndexFromUser(1, 4, "Enter the suit's number you want to ask for: ") - 1];
 	}
-	
+
+	private static Map<GCard.Suit, String> colormap = new HashMap<GCard.Suit, String>();
+	static {
+		colormap.put(GCard.Suit.ACORNS, AnsiColor.YELLOW);
+		colormap.put(GCard.Suit.LEAVES, AnsiColor.GREEN);
+		colormap.put(GCard.Suit.HEARTS, AnsiColor.RED);
+		colormap.put(GCard.Suit.BELLS, AnsiColor.PURPLE);
+	}
+
+	private int readIndexFromUser(int min, int max, String msg) {
+		int idx = -1;
+		while (true) {
+			System.out.println(msg);
+			try {
+				idx = Integer.parseInt(reader.readLine());
+			} catch (IOException e) {
+				System.out.println("Some kind of error happened that I can't handle :(\nI will quit :(");
+				System.exit(1);
+			} catch (NumberFormatException e) {
+				idx = -1;
+			}
+			if (idx >= min && idx <= max) {
+				break;
+			} else {
+				System.out.println("Invalid answer. Try again.");
+			}
+		}
+		return idx;
+	}
+
+	private void printProposeInformation(List<GCard> handView, Game game) {
+		System.out.println("Top card: " + AnsiColor.BLUE_BACKGROUND + color(game.getTopCard()) + ". Cards in deck: "
+				+ game.getStockSize());
+		System.out.println("Opponent cards: " + oppCardCount);
+		System.out.print("Your cards are: | ");
+		for (int i = 0; i < handView.size(); i++) {
+			System.out.print(i + 1 + ": " + color(handView.get(i)) + " | ");
+		}
+	}
+
+	private void chat(boolean drew, GCard card, int idx) {
+		if (drew) {
+			System.out.println();
+			System.out.println("-- You: I drew a card.");
+			System.out.println();
+		} else {
+			System.out.println();
+			System.out.println("-- You: I put the card " + idx + " " + color(card) + " into the pile.");
+			System.out.println();
+		}
+	}
+
+	// quick hack
+	static String color(GCard card) {
+		String rank;
+		String suit = surround(card.getSuit().toString(), colormap.get(card.getSuit()));
+
+		if (card.getRank() == Rank.SEVEN) {
+			rank = surround(card.getRank().toString(), AnsiColor.BRIGHT + AnsiColor.CYAN, AnsiColor.RESET_FOREGROUND);
+		} else {
+			rank = surround(card.getRank().toString(), AnsiColor.CYAN, AnsiColor.RESET_FOREGROUND);
+		}
+
+		return rank + " of " + suit;
+	}
+
+	static String surround(String str, String prefix) {
+		return surround(str, prefix, AnsiColor.RESET);
+	}
+
+	static String surround(String str, String prefix, String suffix) {
+		return prefix + str + suffix;
+	}
+
 	@Override
 	public void playerJoined(GamePassiveEvent e) {
-
 
 	}
 
 	@Override
 	public void playerLeft(GamePassiveEvent e) {
 
-
 	}
 
 	@Override
 	public void currentPlayerChanged(GamePassiveEvent e) {
-
 
 	}
 
 	@Override
 	public void gameStateChanged(GamePassiveEvent e) {
 		if (e.getOldState() == GameState.PREGAME) {
-			System.out.println("The top card is \033[44m" + color(e.getGame().getTopCard().toString()) + "\033[0m.");
+			System.out.println("The top card is \033[44m" + color(e.getGame().getTopCard()) + "\033[0m.");
 			if (e.getGame().getStartingPlayer() == me) {
-				System.out.println("\033[33mYou start!\033[0m");
+				System.out.println("\033[33mYou start!" + AnsiColor.RESET);
 			} else {
-				System.out.println("\033[33mThe bot starts!\033[0m");
+				System.out.println("\033[33mThe bot starts!" + AnsiColor.RESET);
 			}
 			System.out.println();
 		}
@@ -175,53 +199,21 @@ public class SampleConsoleController implements Controller, GameListener {
 	@Override
 	public void roundChanged(GameQuantitativeEvent e) {
 
-
 	}
 
 	@Override
-	public void deckRefilled(Game game) {
-
+	public void stockRefilled(Game game) {
 
 	}
 
 	@Override
 	public void stockSizeDecreased(GameQuantitativeEvent e) {
 
-
 	}
 
 	@Override
 	public void pileSizeIncreased(GameQuantitativeEvent e) {
 
-
-	}
-
-	private static Map<String, String> colormap = new HashMap<>();
-	static {
-		colormap.put("ACORNS", "\033[33m");
-		colormap.put("LEAVES", "\033[32m");
-		colormap.put("HEARTS", "\033[31m");
-		colormap.put("BELLS", "\033[35m");
-	}
-
-	// relies on GCard.toString; not robust
-	static String color(String card) {
-		String[] tokens = card.split(" ");
-		String rank = tokens[0];
-		if (rank.equals("SEVEN")) {
-			rank = surround(tokens[0], "\033[1m\033[36m", "\033[39m");
-		} else {
-			rank = surround(tokens[0], "\033[36m", "\033[39m");
-		}
-		return rank + " " + tokens[1] + " " + surround(tokens[2], colormap.get(tokens[2]));
-	}
-
-	static String surround(String str, String prefix) {
-		return surround(str, prefix, "\033[0m");
-	}
-	
-	static String surround(String str, String prefix, String suffix) {
-		return prefix + str + suffix;
 	}
 
 }
