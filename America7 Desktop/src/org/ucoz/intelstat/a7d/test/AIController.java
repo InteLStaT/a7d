@@ -23,7 +23,7 @@ public class AIController implements Controller {
 		
 		if(topCard.getRank() == GCard.Rank.UNDER || topCard.getRank() == GCard.Rank.ACE) {
 			for(GCard _card : handView) {
-				if(_card.getRank() == topCard.getRank()) {
+				if(GameRules.isValidMove(topCard, _card, true)) {
 					card = _card;
 					break;
 				}
