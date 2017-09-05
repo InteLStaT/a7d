@@ -35,7 +35,7 @@ public class SampleAIGame extends GameWindow {
 		aiCtrl = new AIController();
 		game.addGameListener((GameListener) humanCtrl);
 		human = game.new Player("You", humanCtrl);
-		ai = game.new Player("AI", aiCtrl);
+		ai = game.new Player("AI Bot", aiCtrl);
 		human.readyUp();
 		ai.readyUp();
 	}

@@ -38,10 +38,10 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		if (idx == 0) {
 			card = null;
-			chat(true, card, idx);
+			chatPropose(true, card);
 		} else {
 			card = handView.get(idx - 1);
-			chat(false, card, idx);
+			chatPropose(false, card);
 		}
 		return card;
 	}
@@ -53,7 +53,7 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		printProposeInformation(handView, game);
 		System.out.println();
-		System.out.println("You have to play a card with suit " + colormap.get(suit.toString()) + suit.toString()
+		System.out.println("You have to play a card with suit " + colormap.get(suit) + suit.toString()
 				+ (AnsiColor.RESET + "."));
 
 		int idx = readIndexFromUser(0, handView.size(),
@@ -61,10 +61,10 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		if (idx == 0) {
 			card = null;
-			chat(true, card, idx);
+			chatPropose(true, card);
 		} else {
 			card = handView.get(idx - 1);
-			chat(false, card, idx);
+			chatPropose(false, card);
 		}
 
 		return card;
@@ -76,26 +76,23 @@ public class SampleConsoleController implements Controller, GameListener {
 		System.out.print("The suits are: | ");
 
 		for (GCard.Suit suit : GCard.Suit.values()) {
-			System.out.print(suit.ordinal() + 1 + ": " + colormap.get(suit) + suit.toString() + " | ");
+			System.out.print(AnsiColor.RESET + (suit.ordinal() + 1) + ": " + colormap.get(suit) + suit.toString() + (AnsiColor.RESET + " | "));
 		}
 
-		System.out.print("\033[0m");
-
-		return GCard.Suit.values()[readIndexFromUser(1, 4, "Enter the suit's number you want to ask for: ") - 1];
+		System.out.println("\033[0m");
+		
+		GCard.Suit suit = GCard.Suit.values()[readIndexFromUser(1, 4, "Enter the suit's number you want to ask for: ") - 1];
+		
+		chatAsked(suit);
+		
+		return suit;
 	}
 
-	private static Map<GCard.Suit, String> colormap = new HashMap<GCard.Suit, String>();
-	static {
-		colormap.put(GCard.Suit.ACORNS, AnsiColor.YELLOW);
-		colormap.put(GCard.Suit.LEAVES, AnsiColor.GREEN);
-		colormap.put(GCard.Suit.HEARTS, AnsiColor.RED);
-		colormap.put(GCard.Suit.BELLS, AnsiColor.PURPLE);
-	}
-
+	
 	private int readIndexFromUser(int min, int max, String msg) {
 		int idx = -1;
 		while (true) {
-			System.out.println(msg);
+			System.out.print(msg);
 			try {
 				idx = Integer.parseInt(reader.readLine());
 			} catch (IOException e) {
@@ -123,16 +120,30 @@ public class SampleConsoleController implements Controller, GameListener {
 		}
 	}
 
-	private void chat(boolean drew, GCard card, int idx) {
+	private void chatPropose(boolean drew, GCard card) {
 		if (drew) {
 			System.out.println();
 			System.out.println("-- You: I drew a card.");
 			System.out.println();
 		} else {
 			System.out.println();
-			System.out.println("-- You: I put the card " + idx + " " + color(card) + " into the pile.");
+			System.out.println("-- You: I put the card " + color(card) + " into the pile.");
 			System.out.println();
 		}
+	}
+	
+	private void chatAsked(GCard.Suit suit) {
+		System.out.println();
+		System.out.println("-- You: I'm asking for " + colormap.get(suit) + suit.toString() + AnsiColor.RESET);
+		System.out.println();
+	}
+
+	public static Map<GCard.Suit, String> colormap = new HashMap<GCard.Suit, String>();
+	static {
+		colormap.put(GCard.Suit.ACORNS, AnsiColor.YELLOW);
+		colormap.put(GCard.Suit.LEAVES, AnsiColor.GREEN);
+		colormap.put(GCard.Suit.HEARTS, AnsiColor.RED);
+		colormap.put(GCard.Suit.BELLS, AnsiColor.PURPLE);
 	}
 
 	// quick hack
