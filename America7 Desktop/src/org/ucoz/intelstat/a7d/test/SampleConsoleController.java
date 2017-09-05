@@ -176,11 +176,7 @@ public class SampleConsoleController implements Controller, GameListener {
 	public void gameStateChanged(GamePassiveEvent e) {
 		if (e.getOldState() == GameState.PREGAME) {
 			System.out.println("The top card is \033[44m" + color(e.getGame().getTopCard()) + "\033[0m.");
-			if (e.getGame().getStartingPlayer() == me) {
-				System.out.println("\033[33mYou start!" + AnsiColor.RESET);
-			} else {
-				System.out.println("\033[33mThe bot starts!" + AnsiColor.RESET);
-			}
+			System.out.println(AnsiColor.YELLOW + e.getGame().getStartingPlayer().getName() + " will start!" + AnsiColor.RESET);
 			System.out.println();
 		}
 		if (e.getNewState() == GameState.POSTGAME) {
