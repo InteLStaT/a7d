@@ -46,7 +46,7 @@ public class AIController implements Controller {
 		GCard card = null;
 		
 		for (GCard _card : handView) {
-			if (GameRules.isValidAskedCard(card, suit)) {
+			if (GameRules.isValidAskedCard(_card, suit)) {
 				card = _card;
 			}
 		}
