@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Random;
 
+// Thanks for this amazing bit from stackoverflow
+/**
+ * This opens a command line and runs some other class in the jar
+ * @author Brandon Barajas
+ */
 public class PhantomMain {
 	public static void main(String[] args) throws IOException, InterruptedException, URISyntaxException {
 		//if(new Random().nextInt(10)==0) System.exit(1);
@@ -21,4 +26,3 @@ public class PhantomMain {
 		}
 	}
 }
-//c:/users/user/desktop/a7d.jar

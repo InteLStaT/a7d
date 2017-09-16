@@ -37,12 +37,14 @@ public class AIController implements Controller {
 			}
 		}
 
-		postMsg(card, game.getTopCard());
+		postMsg(card, game);
 
 		return card;
 	}
 
 	public GCard proposeCardWithSuit(List<GCard> handView, Game game, Player player, GCard.Suit suit) {
+		preMsg();
+		
 		GCard card = null;
 		
 		for (GCard _card : handView) {
@@ -51,7 +53,7 @@ public class AIController implements Controller {
 			}
 		}
 		
-		postMsg(card, game.getTopCard());
+		postMsg(card, game);
 		
 		return card;
 	}
@@ -72,8 +74,8 @@ public class AIController implements Controller {
 		}
 	}
 
-	private void postMsg(GCard card, GCard topCard) {
-		if (topCard.getRank() == GCard.Rank.ACE && card == null) {
+	private void postMsg(GCard card, Game game) {
+		if (card == null && game.isAceStreak()) {
 			System.out.println("\r-- AI Bot: You skipped me!");
 			System.out.println();
 		} else if (card == null) {

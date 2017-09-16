@@ -38,10 +38,10 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		if (idx == 0) {
 			card = null;
-			chatPropose(true, card);
+			chatPropose(true, card, game);
 		} else {
 			card = handView.get(idx - 1);
-			chatPropose(false, card);
+			chatPropose(false, card, game);
 		}
 		return card;
 	}
@@ -61,10 +61,10 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		if (idx == 0) {
 			card = null;
-			chatPropose(true, card);
+			chatPropose(true, card, game);
 		} else {
 			card = handView.get(idx - 1);
-			chatPropose(false, card);
+			chatPropose(false, card, game);
 		}
 
 		return card;
@@ -120,10 +120,16 @@ public class SampleConsoleController implements Controller, GameListener {
 		}
 	}
 
-	private void chatPropose(boolean drew, GCard card) {
-		if (drew) {
+	// Chat
+	private void chatPropose(boolean drew, GCard card, Game game) {
+		if(game.isAceStreak() && drew) {
 			System.out.println();
-			System.out.println("-- You: I drew a card.");
+			System.out.println("-- You: You skipped me, bot. What a move!");
+			System.out.println();
+		}
+		else if (drew) {
+			System.out.println();
+			System.out.println("-- You: I drew.");
 			System.out.println();
 		} else {
 			System.out.println();
@@ -146,7 +152,7 @@ public class SampleConsoleController implements Controller, GameListener {
 		colormap.put(GCard.Suit.BELLS, AnsiColor.PURPLE);
 	}
 
-	// quick hack
+	// Quick color hack
 	static String color(GCard card) {
 		String rank;
 		String suit = surround(card.getSuit().toString(), colormap.get(card.getSuit()));
@@ -168,6 +174,7 @@ public class SampleConsoleController implements Controller, GameListener {
 		return prefix + str + suffix;
 	}
 
+	// EVENTS
 	@Override
 	public void playerJoined(GamePassiveEvent e) {
 
