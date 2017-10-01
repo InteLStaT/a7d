@@ -3,6 +3,7 @@ package org.ucoz.intelstat.a7d.test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class SampleConsoleController implements Controller, GameListener {
 		System.out.println();
 
 		int idx = readIndexFromUser(0, handView.size(),
-				"Enter the card's number you want to put in the pile, or 0 to draw: > ");
+				"Írd be a kártya számát, amit tenni akarsz, vagy 0-t a vevéshez: > ");
 
 		if (idx == 0) {
 			card = null;
@@ -53,11 +54,11 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		printProposeInformation(handView, game);
 		System.out.println();
-		System.out.println("You have to play a card with suit " + colormap.get(suit) + suit.toString()
+		System.out.println("A következö színt kéri az ellenfeled: " + colormap.get(suit) + suit.toString()
 				+ (AnsiColor.RESET + "."));
 
 		int idx = readIndexFromUser(0, handView.size(),
-				"Enter the card's number you want to put in the pile, or 0 to draw: > ");
+				"Írd be a kártya számát, amit tenni akarsz, vagy 0-t a vevéshez: > ");
 
 		if (idx == 0) {
 			card = null;
@@ -72,8 +73,8 @@ public class SampleConsoleController implements Controller, GameListener {
 
 	@Override
 	public GCard.Suit askForSuit(List<GCard> handView, Game game, Player player) {
-		System.out.println("You have to ask for a suit.");
-		System.out.print("The suits are: | ");
+		System.out.println("Színt kell kérned.");
+		System.out.print("Ezek a színek: | ");
 
 		for (GCard.Suit suit : GCard.Suit.values()) {
 			System.out.print(AnsiColor.RESET + (suit.ordinal() + 1) + ": " + colormap.get(suit) + suit.toString() + (AnsiColor.RESET + " | "));
@@ -81,7 +82,7 @@ public class SampleConsoleController implements Controller, GameListener {
 
 		System.out.println("\033[0m");
 		
-		GCard.Suit suit = GCard.Suit.values()[readIndexFromUser(1, 4, "Enter the suit's number you want to ask for: ") - 1];
+		GCard.Suit suit = GCard.Suit.values()[readIndexFromUser(1, 4, "Írd be a szín számát, amit kérni akarsz: ") - 1];
 		
 		chatAsked(suit);
 		
@@ -104,17 +105,17 @@ public class SampleConsoleController implements Controller, GameListener {
 			if (idx >= min && idx <= max) {
 				break;
 			} else {
-				System.out.println("Invalid answer. Try again.");
+				System.out.println("Hibás válasz. Próbáld újra.");
 			}
 		}
 		return idx;
 	}
 
 	private void printProposeInformation(List<GCard> handView, Game game) {
-		System.out.println("Top card: " + AnsiColor.BLUE_BACKGROUND + color(game.getTopCard()) + ". Cards in deck: "
+		System.out.println("Legfelsö kártya: " + AnsiColor.BLUE_BACKGROUND + color(game.getTopCard()) + ". Kártyák a pakliban: "
 				+ game.getStockSize());
-		System.out.println("Opponent cards: " + oppCardCount);
-		System.out.print("Your cards are: | ");
+		System.out.println("Ellenség kártyáinak száma: " + oppCardCount);
+		System.out.print("A te kártyáid: | ");
 		for (int i = 0; i < handView.size(); i++) {
 			System.out.print(i + 1 + ": " + color(handView.get(i)) + " | ");
 		}
@@ -124,46 +125,63 @@ public class SampleConsoleController implements Controller, GameListener {
 	private void chatPropose(boolean drew, GCard card, Game game) {
 		if(game.isAceStreak() && drew) {
 			System.out.println();
-			System.out.println("-- You: You skipped me, bot. What a move!");
+			System.out.println("-- Te: Kimarasztottál! De jó neked.");
 			System.out.println();
 		}
 		else if (drew) {
 			System.out.println();
-			System.out.println("-- You: I drew.");
+			System.out.println("-- Te: Vettem.");
 			System.out.println();
 		} else {
 			System.out.println();
-			System.out.println("-- You: I put the card " + color(card) + " into the pile.");
+			System.out.println("-- Te: " + color(card) + "t tettem.");
 			System.out.println();
 		}
 	}
 	
 	private void chatAsked(GCard.Suit suit) {
 		System.out.println();
-		System.out.println("-- You: I'm asking for " + colormap.get(suit) + suit.toString() + AnsiColor.RESET);
+		System.out.println("-- Te: Ezt a színt kérem: " + colormap.get(suit) + suit.toString() + AnsiColor.RESET);
 		System.out.println();
 	}
 
 	public static Map<GCard.Suit, String> colormap = new HashMap<GCard.Suit, String>();
+	public static EnumMap<GCard.Suit, String> suitHun = new EnumMap<>(GCard.Suit.class);
+	public static EnumMap<GCard.Rank, String> rankHun = new EnumMap<>(GCard.Rank.class);
 	static {
 		colormap.put(GCard.Suit.ACORNS, AnsiColor.YELLOW);
 		colormap.put(GCard.Suit.LEAVES, AnsiColor.GREEN);
 		colormap.put(GCard.Suit.HEARTS, AnsiColor.RED);
 		colormap.put(GCard.Suit.BELLS, AnsiColor.PURPLE);
+		
+		suitHun.put(GCard.Suit.ACORNS, "MAKK");
+		suitHun.put(GCard.Suit.LEAVES, "ZÖLD");
+		suitHun.put(GCard.Suit.HEARTS, "PIROS");
+		suitHun.put(GCard.Suit.BELLS, "TÖK");
+		
+		rankHun.put(GCard.Rank.ACE, "áSZ");
+		rankHun.put(GCard.Rank.UNDER, "KETTES");
+		rankHun.put(GCard.Rank.OVER, "HáRMAS");
+		rankHun.put(GCard.Rank.KING, "KIRáLY");
+		rankHun.put(GCard.Rank.SEVEN, "HETES");
+		rankHun.put(GCard.Rank.EIGHT, "NYOLCAS");
+		rankHun.put(GCard.Rank.NINE, "KILENCES");
+		rankHun.put(GCard.Rank.TEN, "TIZES");
 	}
+	
 
 	// Quick color hack
 	static String color(GCard card) {
 		String rank;
-		String suit = surround(card.getSuit().toString(), colormap.get(card.getSuit()));
+		String suit = surround(suitHun.get(card.getSuit()), colormap.get(card.getSuit()));
 
 		if (card.getRank() == Rank.SEVEN) {
-			rank = surround(card.getRank().toString(), AnsiColor.BRIGHT + AnsiColor.CYAN, AnsiColor.RESET_FOREGROUND);
+			rank = surround(rankHun.get(card.getRank()), AnsiColor.BRIGHT + AnsiColor.CYAN, AnsiColor.RESET);
 		} else {
-			rank = surround(card.getRank().toString(), AnsiColor.CYAN, AnsiColor.RESET_FOREGROUND);
+			rank = surround(rankHun.get(card.getRank()), AnsiColor.CYAN, AnsiColor.RESET);
 		}
 
-		return rank + " of " + suit;
+		return suit + " " + rank;
 	}
 
 	static String surround(String str, String prefix) {
@@ -193,13 +211,13 @@ public class SampleConsoleController implements Controller, GameListener {
 	@Override
 	public void gameStateChanged(GamePassiveEvent e) {
 		if (e.getOldState() == GameState.PREGAME) {
-			System.out.println("The top card is \033[44m" + color(e.getGame().getTopCard()) + "\033[0m.");
-			System.out.println(AnsiColor.YELLOW + e.getGame().getStartingPlayer().getName() + " will start!" + AnsiColor.RESET);
+			System.out.println("A kezdö legfelsö kártya: \033[44m" + color(e.getGame().getTopCard()) + "\033[0m.");
+			System.out.println(AnsiColor.YELLOW + e.getGame().getStartingPlayer().getName() + " fog kezdeni!" + AnsiColor.RESET);
 			System.out.println();
 		}
 		if (e.getNewState() == GameState.POSTGAME) {
-			System.out.println("Winner: " + e.getGame().getWinner().getName());
-			System.out.println("You can safely close this window now (and play a new game perhaps?)");
+			System.out.println("Nyertes: " + e.getGame().getWinner().getName());
+			System.out.println("Most biztonságosan bezárhatod ezt az ablakot (és játszhatsz újra!)");
 		}
 	}
 

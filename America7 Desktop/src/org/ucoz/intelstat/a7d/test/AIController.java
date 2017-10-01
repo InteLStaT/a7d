@@ -67,7 +67,7 @@ public class AIController implements Controller {
 	}
 
 	private void preMsg() {
-		System.out.print("-- AI Bot: Thinking...");
+		System.out.print("-- AI Bot: Gondolkozok...");
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
@@ -76,20 +76,20 @@ public class AIController implements Controller {
 
 	private void postMsg(GCard card, Game game) {
 		if (card == null && game.isAceStreak()) {
-			System.out.println("\r-- AI Bot: You skipped me!");
+			System.out.println("\r-- AI Bot: Kimarasztottál!");
 			System.out.println();
 		} else if (card == null) {
-			System.out.println("\r-- AI Bot: I drew.     ");
+			System.out.println("\r-- AI Bot: Vettem.         ");
 			System.out.println();
 		} else {
 			System.out
-					.println("\r-- AI Bot: I put the card " + SampleConsoleController.color(card) + " into the pile.");
+					.println("\r-- AI Bot: " + SampleConsoleController.color(card) + "t tettem.");
 			System.out.println();
 		}
 	}
 
 	private void postMsgAsked(GCard.Suit suit) {
-		System.out.println("\r-- AI Bot: I'm asking for " + SampleConsoleController.colormap.get(suit)
+		System.out.println("\r-- AI Bot: Ezt a színt kérem " + SampleConsoleController.colormap.get(suit)
 				+ suit.toString() + AnsiColor.RESET);
 		System.out.println();
 	}

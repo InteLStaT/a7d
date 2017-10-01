@@ -4,7 +4,7 @@ import javax.swing.JPanel;
 
 import org.ucoz.intelstat.a7.core.Game;
 
-public class GameWindow extends JPanel {
+public class GameWindow {
 
 	protected Game game;
 	
@@ -12,7 +12,7 @@ public class GameWindow extends JPanel {
 		this.game = game;
 	}
 	
-	public void startGame() {
+	public final void startGame() {
 		game.start();
 	}
 	
